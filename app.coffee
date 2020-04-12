@@ -1,25 +1,29 @@
 process.env.NODE_ENV ?= 'development'
-debug = process.env.NODE_ENV isnt 'production'
+{version} = require './package.json';
+console.log "[#{process.pid}] env: #{process.env.NODE_ENV}, version: #{version}"
 
-express = require 'express'
-morgan = require 'morgan'
+Koa = require 'koa'
+morgan = require 'koa-morgan'
+bodyparser = require 'koa-bodyparser'
+compress = require 'koa-compress'
+helmet = require 'koa-helmet'
+route = require 'koa-route'
 
-version = "unknown"
-gitsha = require 'gitsha'
-gitsha __dirname, (error, output) ->
-	if error then return console.error output
-	version = output
-	console.log "[#{process.pid}] env: #{process.env.NODE_ENV}, version: #{output}"
+app = new Koa()
 
-app = express()
+# koa options
+## trust proxy header fields
+app.proxy = true
 
-app.use morgan(if debug then 'dev' else 'short')
+# koa middleware
+app.use morgan(if app.env is 'production' then 'combined' else 'tiny')
+app.use helmet()
+app.use compress()
+app.use bodyparser()
 
-# app.set 'trust proxy', 'loopback'
-app.locals.pretty = debug
-
-app.get '/api/test', (req, res) ->
-	res.json {err: false, msg: "API speaks!"}
+# koa application
+api = require './controllers/api'
+app.use route.get '/api/test', api.test
 
 server = app.listen process.env.UNIX_SOCKET_PATH or process.env.PORT or 0, ->
 	serverInfo = server.address()

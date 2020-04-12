@@ -3,14 +3,17 @@
   "scripts": {
     "start": "coffee app.coffee"
   },
-  "version": "4.0.0",
+  "version": "5.0.0",
   "author": "Aaditya Bhatia <aadityabhatia@gmail.com>",
-  "description": "production-ready node skeleton",
+  "description": "REST API server",
   "dependencies": {
-    "express": "^4.16.4",
-    "gitsha": "^0.1.0",
-    "morgan": "^1.9.1",
     "socket.io": "^2.2.0"
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-compress": "^3.0.0",
+    "koa-helmet": "^5.2.0",
+    "koa-morgan": "^1.0.1",
+    "koa-route": "^3.2.0"
   },
   "engines": {
     "node": ">=12"
