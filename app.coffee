@@ -7,7 +7,6 @@ morgan = require 'koa-morgan'
 bodyparser = require 'koa-bodyparser'
 compress = require 'koa-compress'
 helmet = require 'koa-helmet'
-route = require 'koa-route'
 
 app = new Koa()
 
@@ -22,8 +21,9 @@ app.use compress()
 app.use bodyparser()
 
 # koa application
-api = require './controllers/api'
-app.use route.get '/api/test', api.test
+routes = require './routes'
+for route in routes
+	app.use route
 
 server = app.listen process.env.UNIX_SOCKET_PATH or process.env.PORT or 0, ->
 	serverInfo = server.address()
